@@ -1,12 +1,24 @@
 import { View, Text, TouchableOpacity, ScrollView, StyleSheet } from 'react-native'
 import React from 'react'
 import EntypoIcon from 'react-native-vector-icons/Entypo';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 
 export default function TodoContainer({ todoList, setTodoList }) {
 
+    async function storeData(data){
+        try{
+          await AsyncStorage.setItem("lists",JSON.stringify(data));
+        }catch(err){
+          console.log(err)
+        }
+      }
+
     function handleRemoveTodo(index) {
-        setTodoList(todoList.filter(((item, i) => (i !== index))))
+        const temp_data = todoList.filter(((item, i) => (i !== index)))
+        setTodoList(temp_data)
+        storeData(temp_data)
     }
 
     function handleCompletedTodo(index) {
@@ -17,7 +29,7 @@ export default function TodoContainer({ todoList, setTodoList }) {
             }
             return item;
         })
-
+        storeData(data)
         setTodoList(data);
     }
 

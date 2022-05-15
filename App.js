@@ -1,14 +1,31 @@
 import { Text, View, StyleSheet, TouchableOpacity, TextInput, ScrollView } from 'react-native'
-import React, { useState } from 'react'
+import React, { useState , useEffect } from 'react'
 import Header from './components/Header';
 import TodoContainer from './components/TodoContainer';
 import AddTodoContainer from './components/AddTodoContainer';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const App = () => {
   const [todoList, setTodoList] = useState([])
   const [disableSubmit, setDisableSubmit] = useState(true)
   const [todoInput, setTodoInput] = useState("")
 
+  async function getData(){
+    try {
+      const data = await AsyncStorage.getItem('lists')
+      if(data != null){
+        const res = JSON.parse(data)
+        setTodoList(res);
+      }
+    }catch(err){
+      console.log(err)
+    }
+  }
+
+  useEffect(()=>{
+    getData();
+  },[])
+  
   return (
     <View style={styles.container}>
 

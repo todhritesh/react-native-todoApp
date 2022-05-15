@@ -1,9 +1,18 @@
 import { View, StyleSheet, TextInput, TouchableOpacity } from 'react-native'
 import React from 'react'
 import EntypoIcon from 'react-native-vector-icons/Entypo';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 export default function AddTodoContainer({ todoList, setTodoList, todoInput, setTodoInput, disableSubmit, setDisableSubmit }) {
+    
+    async function storeData(data){
+        try{
+          await AsyncStorage.setItem("lists",JSON.stringify(data));
+        }catch(err){
+          console.log(err)
+        }
+      }
 
     function handleTodoInput(val) {
         if (val === "") {
@@ -20,14 +29,18 @@ export default function AddTodoContainer({ todoList, setTodoList, todoInput, set
             status: false,
             todo: todoInput
         }
-        setTodoList([...todoList, data]);
+
+        const temp_data = [...todoList, data]
+
+        setTodoList(temp_data);
+        storeData(temp_data)
         setTodoInput("");
         setDisableSubmit(true)
     }
     return (
         <View style={styles.addTodoContainer}>
             <View style={styles.addTodoInput}>
-                <TextInput value={todoInput} onChangeText={(val) => handleTodoInput(val)} placeholder='Write sometthing...' style={{ fontSize: 22, paddingHorizontal: 15 }} />
+                <TextInput placeholderTextColor="grey" value={todoInput} onChangeText={(val) => handleTodoInput(val)} placeholder='Write sometthing...' style={{ fontSize: 22, paddingHorizontal: 15 , color:"black" }} />
             </View>
             <View style={styles.addTodoButton}>
                 <TouchableOpacity onPress={() => handleSubmit()} disabled={disableSubmit} >
@@ -55,7 +68,7 @@ const styles = StyleSheet.create({
         borderColor: "grey",
         borderRadius: 40,
         fontSize: 30,
-        height: 55
+        height: 55,
     },
     addTodoButton: {
         paddingLeft: 10,
